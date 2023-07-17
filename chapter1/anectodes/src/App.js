@@ -20,14 +20,42 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
    
-  const [selected, setSelected] = useState(0)
+  const [dailyAnectodeIndex, setDailyAnectodeIndex] = useState(0)
+
+  const [votes, setVotes] = useState({
+    votes: Array(anecdotes.length).fill(0),
+    highestVoted: 0
+  })
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>
-      {anecdotes[selected]}
+        {anecdotes[dailyAnectodeIndex]}<br/>
+        Has {votes.votes[dailyAnectodeIndex]} votes.
       </p>
-      <Button label='Generate' callback={() => {setSelected(Math.floor(Math.random() * anecdotes.length))}} />
+      <Button label='Vote' callback={() => {
+        const votesCpy = {...votes.votes}
+        votesCpy[dailyAnectodeIndex] += 1
+        let newHighestVoted = votes.highestVoted
+        if (votesCpy[dailyAnectodeIndex] > votesCpy[votes.highestVoted]) {
+          newHighestVoted = dailyAnectodeIndex
+        }
+        const voteCpy = {
+          votes: votesCpy,
+          highestVoted: newHighestVoted
+        }
+        setVotes(voteCpy)
+      }} />
+      <Button label='Next' callback={() => {
+        const selection = Math.floor(Math.random() * anecdotes.length)
+        setDailyAnectodeIndex(selection)
+      }} />
+      <h1>Anecdote with most votes</h1>
+      <p>
+        {anecdotes[votes.highestVoted]}<br/>
+        Has {votes.votes[votes.highestVoted]} votes.
+      </p>
     </div>
   )
 }
